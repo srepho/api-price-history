@@ -1,0 +1,301 @@
+{
+  "checked_at": "2026-11-13",
+  "sources": {
+    "anthropic": {
+      "title": "Anthropic pricing (current)",
+      "url": "https://platform.claude.com/docs/en/about-claude/pricing"
+    },
+    "openai": {
+      "title": "OpenAI pricing (current)",
+      "url": "https://developers.openai.com/api/docs/pricing"
+    },
+    "anRelease": {
+      "title": "Claude release notes",
+      "url": "https://platform.claude.com/docs/en/release-notes/overview"
+    },
+    "oaRelease": {
+      "title": "OpenAI changelog",
+      "url": "https://developers.openai.com/api/docs/changelog"
+    },
+    "caching": {
+      "title": "Claude caching announcement",
+      "url": "https://claude.com/resources/articles/prompt-caching"
+    },
+    "july23": {
+      "title": "Claude July 2023 price sheet",
+      "url": "https://www-cdn.anthropic.com/90df03aed08b794ab03c5a7bf28b2ad9cf26cf3c/model_pricing_july2023.pdf"
+    },
+    "nov23": {
+      "title": "Claude November 2023 price sheet",
+      "url": "https://www-cdn.anthropic.com/1b1ea2c43d8dd058f6a331a8097e05ea40d626c6/model_pricing_nov2023.pdf"
+    },
+    "claude2": {
+      "title": "Claude 2 launch",
+      "url": "https://www.anthropic.com/news/claude-2"
+    },
+    "claude21": {
+      "title": "Claude 2.1 launch",
+      "url": "https://www.anthropic.com/news/claude-2-1"
+    },
+    "gpt4o": {
+      "title": "GPT-4o model reference",
+      "url": "https://developers.openai.com/api/docs/models/gpt-4o"
+    }
+  },
+  "rows": {
+    "0|Opus|2024-03-04": {
+      "status": "Provisional history",
+      "note": "Rates and effective date retained from the original unsourced draft; not independently verified. Do not treat as an audited historical quote.",
+      "sources": []
+    },
+    "0|Opus|2024-08-14": {
+      "status": "Historical point sourced",
+      "note": "Caching beta date from release notes; rate table from the caching announcement. Later family releases are grouped at these rates, not implied to exist on this date.",
+      "sources": [
+        "anRelease",
+        "caching"
+      ]
+    },
+    "0|Opus|2025-11-24": {
+      "status": "Provisional history",
+      "note": "Rates and effective date retained from the original unsourced draft; not independently verified. Do not treat as an audited historical quote.",
+      "sources": []
+    },
+    "0|Opus|2026-09-22": {
+      "status": "Current rates verified; history provisional",
+      "note": "Input, output and cache-read rates match the 13 Nov 2026 pricing page. This page alone does not verify the historical start date or intervening rates.",
+      "sources": [
+        "anthropic"
+      ]
+    },
+    "0|Fable|2026-06-09": {
+      "status": "Provisional history",
+      "note": "Rates and effective date retained from the original unsourced draft; not independently verified. Do not treat as an audited historical quote.",
+      "sources": []
+    },
+    "0|Fable|2026-09-01": {
+      "status": "Provisional history",
+      "note": "Rates and effective date retained from the original unsourced draft; not independently verified. Do not treat as an audited historical quote.",
+      "sources": []
+    },
+    "0|Fable|2026-11-09": {
+      "status": "Launch and current rates sourced",
+      "note": "Release notes establish the launch and base prices; current pricing confirms cache reads. Continuous pricing between observations is assumed.",
+      "sources": [
+        "anRelease",
+        "anthropic"
+      ]
+    },
+    "0|Claude 2 / 2.1|2023-07-11": {
+      "status": "Historical point sourced",
+      "note": "July price sheet gives 11.02 input / 32.68 output; launch date from announcement. Holding these rates until the November observation is provisional. No caching discount assumed.",
+      "sources": [
+        "july23",
+        "claude2"
+      ]
+    },
+    "0|Claude 2 / 2.1|2023-11-21": {
+      "status": "Historical point sourced",
+      "note": "November sheet gives 8 input / 24 output for Claude 2.0 and 2.1; announcement dates this observation. An earlier effective date for the reduction is not established. No caching discount assumed.",
+      "sources": [
+        "nov23",
+        "claude21"
+      ]
+    },
+    "0|Sonnet|2024-03-04": {
+      "status": "Provisional history",
+      "note": "Rates and effective date retained from the original unsourced draft; not independently verified. Do not treat as an audited historical quote.",
+      "sources": []
+    },
+    "0|Sonnet|2024-08-14": {
+      "status": "Historical point sourced",
+      "note": "Caching beta date from release notes; rate table from the caching announcement. Later family releases are grouped at these rates, not implied to exist on this date.",
+      "sources": [
+        "anRelease",
+        "caching"
+      ]
+    },
+    "0|Sonnet|2026-06-30": {
+      "status": "Provisional history",
+      "note": "Rates and effective date retained from the original unsourced draft; not independently verified. Do not treat as an audited historical quote.",
+      "sources": []
+    },
+    "0|Sonnet|2026-09-28": {
+      "status": "Current rates verified; history provisional",
+      "note": "Input, output and cache-read rates match the 13 Nov 2026 pricing page. This page alone does not verify the historical start date or intervening rates.",
+      "sources": [
+        "anthropic"
+      ]
+    },
+    "0|Haiku|2024-03-13": {
+      "status": "Provisional history",
+      "note": "Rates and effective date retained from the original unsourced draft; not independently verified. Do not treat as an audited historical quote.",
+      "sources": []
+    },
+    "0|Haiku|2024-08-14": {
+      "status": "Historical point sourced",
+      "note": "Caching beta date from release notes; rate table from the caching announcement. Later family releases are grouped at these rates, not implied to exist on this date.",
+      "sources": [
+        "anRelease",
+        "caching"
+      ]
+    },
+    "0|Haiku|2024-11-04": {
+      "status": "Provisional history",
+      "note": "Rates and effective date retained from the original unsourced draft; not independently verified. Do not treat as an audited historical quote.",
+      "sources": []
+    },
+    "0|Haiku|2025-10-15": {
+      "status": "Provisional history",
+      "note": "Rates and effective date retained from the original unsourced draft; not independently verified. Do not treat as an audited historical quote.",
+      "sources": []
+    },
+    "0|Haiku|2026-10-07": {
+      "status": "Current rates verified; history provisional",
+      "note": "Input, output and cache-read rates match the 13 Nov 2026 pricing page. This page alone does not verify the historical start date or intervening rates.",
+      "sources": [
+        "anthropic"
+      ]
+    },
+    "1|Flagship (GPT-4 to Sol)|2023-03-14": {
+      "status": "Provisional history",
+      "note": "Rates and effective date retained from the original unsourced draft; not independently verified. Do not treat as an audited historical quote.",
+      "sources": []
+    },
+    "1|Flagship (GPT-4 to Sol)|2023-11-06": {
+      "status": "Provisional history",
+      "note": "Rates and effective date retained from the original unsourced draft; not independently verified. Do not treat as an audited historical quote.",
+      "sources": []
+    },
+    "1|Flagship (GPT-4 to Sol)|2024-05-13": {
+      "status": "Provisional history",
+      "note": "Rates and effective date retained from the original unsourced draft; not independently verified. Do not treat as an audited historical quote.",
+      "sources": []
+    },
+    "1|Flagship (GPT-4 to Sol)|2024-08-06": {
+      "status": "Launch sourced; historical rates provisional",
+      "note": "Changelog dates the new GPT-4o snapshot. The model reference is a current reference, not a dated price archive; the draft launch-day rates remain provisional.",
+      "sources": [
+        "oaRelease",
+        "gpt4o"
+      ]
+    },
+    "1|Flagship (GPT-4 to Sol)|2024-10-01": {
+      "status": "Provisional history",
+      "note": "Rates and effective date retained from the original unsourced draft; not independently verified. Do not treat as an audited historical quote.",
+      "sources": []
+    },
+    "1|Flagship (GPT-4 to Sol)|2025-04-14": {
+      "status": "Provisional history",
+      "note": "Rates and effective date retained from the original unsourced draft; not independently verified. Do not treat as an audited historical quote.",
+      "sources": []
+    },
+    "1|Flagship (GPT-4 to Sol)|2025-08-07": {
+      "status": "Provisional history",
+      "note": "Rates and effective date retained from the original unsourced draft; not independently verified. Do not treat as an audited historical quote.",
+      "sources": []
+    },
+    "1|Flagship (GPT-4 to Sol)|2025-12-11": {
+      "status": "Provisional history",
+      "note": "Rates and effective date retained from the original unsourced draft; not independently verified. Do not treat as an audited historical quote.",
+      "sources": []
+    },
+    "1|Flagship (GPT-4 to Sol)|2026-03-05": {
+      "status": "Provisional history",
+      "note": "Rates and effective date retained from the original unsourced draft; not independently verified. Do not treat as an audited historical quote.",
+      "sources": []
+    },
+    "1|Flagship (GPT-4 to Sol)|2026-04-24": {
+      "status": "Provisional history",
+      "note": "Rates and effective date retained from the original unsourced draft; not independently verified. Do not treat as an audited historical quote.",
+      "sources": []
+    },
+    "1|Flagship (GPT-4 to Sol)|2026-07-09": {
+      "status": "Provisional history",
+      "note": "Rates and effective date retained from the original unsourced draft; not independently verified. Do not treat as an audited historical quote.",
+      "sources": []
+    },
+    "1|Flagship (GPT-4 to Sol)|2026-09-22": {
+      "status": "Historical point sourced",
+      "note": "Dated changelog gives launch, standard input, cached input and output rates.",
+      "sources": [
+        "oaRelease"
+      ]
+    },
+    "1|Flagship (GPT-4 to Sol)|2026-09-29": {
+      "status": "Historical point sourced",
+      "note": "Dated changelog gives launch, standard input, cached input and output rates.",
+      "sources": [
+        "oaRelease"
+      ]
+    },
+    "1|Frontier (Astra)|2026-09-03": {
+      "status": "Launch and current rates sourced",
+      "note": "Changelog establishes launch date; current pricing confirms rates. Launch-day rates and continuous pricing are not independently established.",
+      "sources": [
+        "oaRelease",
+        "openai"
+      ]
+    },
+    "1|Codex-tuned models|2025-05-16": {
+      "status": "Provisional history",
+      "note": "Rates and effective date retained from the original unsourced draft; not independently verified. Do not treat as an audited historical quote.",
+      "sources": []
+    },
+    "1|Codex-tuned models|2025-09-23": {
+      "status": "Provisional history",
+      "note": "Rates and effective date retained from the original unsourced draft; not independently verified. Do not treat as an audited historical quote.",
+      "sources": []
+    },
+    "1|Codex-tuned models|2025-12-11": {
+      "status": "Provisional history",
+      "note": "Rates and effective date retained from the original unsourced draft; not independently verified. Do not treat as an audited historical quote.",
+      "sources": []
+    },
+    "1|Mid (Terra)|2026-07-09": {
+      "status": "Provisional history",
+      "note": "Rates and effective date retained from the original unsourced draft; not independently verified. Do not treat as an audited historical quote.",
+      "sources": []
+    },
+    "1|Mid (Terra)|2026-10-26": {
+      "status": "Launch and current rates sourced",
+      "note": "Changelog establishes launch date; current pricing confirms rates. Launch-day rates and continuous pricing are not independently established.",
+      "sources": [
+        "oaRelease",
+        "openai"
+      ]
+    },
+    "1|Small (mini / Luna)|2024-07-18": {
+      "status": "Provisional history",
+      "note": "Rates and effective date retained from the original unsourced draft; not independently verified. Do not treat as an audited historical quote.",
+      "sources": []
+    },
+    "1|Small (mini / Luna)|2024-10-01": {
+      "status": "Provisional history",
+      "note": "Rates and effective date retained from the original unsourced draft; not independently verified. Do not treat as an audited historical quote.",
+      "sources": []
+    },
+    "1|Small (mini / Luna)|2025-08-07": {
+      "status": "Provisional history",
+      "note": "Rates and effective date retained from the original unsourced draft; not independently verified. Do not treat as an audited historical quote.",
+      "sources": []
+    },
+    "1|Small (mini / Luna)|2026-03-17": {
+      "status": "Provisional history",
+      "note": "Rates and effective date retained from the original unsourced draft; not independently verified. Do not treat as an audited historical quote.",
+      "sources": []
+    },
+    "1|Small (mini / Luna)|2026-07-09": {
+      "status": "Provisional history",
+      "note": "Rates and effective date retained from the original unsourced draft; not independently verified. Do not treat as an audited historical quote.",
+      "sources": []
+    },
+    "1|Small (mini / Luna)|2026-09-22": {
+      "status": "Historical point sourced",
+      "note": "Dated changelog gives launch, standard input, cached input and output rates.",
+      "sources": [
+        "oaRelease"
+      ]
+    }
+  }
+}

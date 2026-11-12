@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>API Price History</title>
+<style>
+:root{--page:#f9f9f7;--surface:#fcfcfb;--ink:#0b0b0b;--ink2:#52514e;--muted:#898781;--grid:#e1e0d9;--axis:#c3c2b7;--up:#b3261e;--down:#006300;
+--s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--s5:#e87ba4}
+@media(prefers-color-scheme:dark){:root{--page:#0d0d0d;--surface:#1a1a19;--ink:#f0efec;--ink2:#c3c2b7;--grid:#2c2c2a;--axis:#383835;--up:#e66767;--down:#0ca30c;
+--s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--s5:#d55181}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--page);color:var(--ink);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif}
+main{max-width:1180px;margin:0 auto;padding:32px 16px 64px}
+h1{font-size:26px;margin:0 0 4px;letter-spacing:-.01em}
+h2{font-size:19px;margin:44px 0 4px}
+h3{font-size:15px;margin:0 0 8px}
+h4{font-size:13px;font-weight:600;margin:0 0 4px;color:var(--ink2)}
+p{margin:0 0 8px;color:var(--ink2);max-width:80ch}
+.bar{position:sticky;top:0;z-index:5;background:var(--page);display:flex;flex-wrap:wrap;align-items:center;gap:8px 20px;margin:16px 0 0;padding:10px 0;border-bottom:1px solid var(--grid)}
+.ctl{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink2)}
+.seg{display:inline-flex;border:1px solid var(--axis);border-radius:8px;overflow:hidden}
+.seg button{font:inherit;font-size:13px;font-weight:600;padding:5px 13px;border:0;background:transparent;color:var(--ink2);cursor:pointer}
+.seg button[aria-pressed=true]{background:var(--ink);color:var(--page)}
+.note{font-size:13px;color:var(--muted)}
+.inputs{display:flex;flex-wrap:wrap;gap:12px 16px;margin:14px 0 6px;padding:14px;background:var(--surface);border:1px solid var(--grid);border-radius:10px}
+.inputs label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--ink2);flex:1 1 170px}
+.inputs input{font:inherit;font-size:15px;padding:6px 8px;border:1px solid var(--axis);border-radius:6px;background:var(--page);color:var(--ink);width:100%;font-variant-numeric:tabular-nums}
+a{color:var(--s1)}
+.assumptions{border-left:3px solid var(--axis);padding:8px 12px;margin:12px 0;font-size:13px}
+td.evidence{white-space:normal;min-width:260px}
+.mix-input{width:75px;font:inherit;color:var(--ink);background:var(--page);border:1px solid var(--axis);border-radius:4px;padding:5px}
+button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--s1);outline-offset:3px}
+.legend{display:flex;flex-wrap:wrap;gap:4px 16px;margin:0 0 8px;font-size:13px;color:var(--ink2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:14px;height:3px;border-radius:2px;display:inline-block;flex:none}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.col{min-width:0}
+@media(max-width:820px){.grid{grid-template-columns:1fr}}
+.card{background:var(--surface);border:1px solid var(--grid);border-radius:10px;padding:14px 14px 8px;position:relative;min-width:0}
+svg{display:block;width:100%;height:auto;overflow:visible}
+svg text{font:11px -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;fill:var(--muted)}
+.tip{position:absolute;pointer-events:none;background:var(--surface);border:1px solid var(--axis);border-radius:8px;padding:8px 10px;font-size:12px;
+box-shadow:0 4px 14px rgba(0,0,0,.12);min-width:190px;display:none;z-index:2}
+.tip b{display:block;margin-bottom:4px}
+.tip div{display:flex;align-items:center;gap:6px;white-space:nowrap}
+.tip i{color:var(--muted);font-style:normal}
+.tip em{font-style:normal;font-weight:600;margin-left:auto;padding-left:12px;font-variant-numeric:tabular-nums}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:10px;margin-top:10px}
+.tile{background:var(--surface);border:1px solid var(--grid);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--ink2);min-width:0}
+.tile .k{display:flex;align-items:center;gap:6px;font-weight:600;color:var(--ink)}
+.tile .m{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile .v{font-size:22px;font-weight:650;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1.3}
+.up{color:var(--up)}.down{color:var(--down)}
+details{margin-top:12px}
+summary{cursor:pointer;color:var(--ink2);font-size:13px}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;font-size:13px;margin-top:8px;width:100%}
+th,td{text-align:left;padding:5px 10px;border-bottom:1px solid var(--grid);white-space:nowrap}
+th{color:var(--ink2);font-weight:600}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+footer{margin-top:40px;font-size:13px}
+footer p{color:var(--muted)}
+</style>
+</head>
+<body>
+<main>
+<h1>API price history and budget scenarios</h1>
+<p>Selected Anthropic and OpenAI model lines, March 2023 to 13 November 2026. Compare fixed token volumes and explore a monthly API budget. This is a dated snapshot, not a live quote or a subscription-plan comparison.</p>
+<div class="bar">
+  <div class="ctl">Currency <div class="seg" data-k="cur"><button data-v="AUD">AUD</button><button data-v="USD">USD</button></div></div>
+  <div class="ctl">Tiers <div class="seg" data-k="view"><button data-v="simple">Best / Standard / Cheap</button><button data-v="detail">All model lines</button></div></div>
+  <div class="ctl">Period <div class="seg" data-k="range"><button data-v="0">All</button><button data-v="2">2 years</button><button data-v="1">1 year</button></div></div>
+  <div class="ctl">Scale <div class="seg" data-k="scale"><button data-v="log">Log</button><button data-v="linear">Linear</button></div></div>
+  <span class="note" id="curNote"></span>
+</div>
+
+<h2>1. Monthly cost for a fixed token volume</h2>
+<p>Enter monthly token volumes to compare base token charges. The starting figures are illustrative: replace them with measured usage. Equal token counts do not mean equal completed work; tokenisation, reasoning, retries and cache hit rates vary across models.</p>
+<div class="assumptions"><strong>Estimate scope:</strong> standard API input, cache reads and output only. Cache-write tokens and charges, long-context premiums, fast processing, tools, subscriptions, taxes and payment FX fees are excluded; batch and negotiated discounts are also excluded. Haiku 5.5 assumes prompts up to 100K tokens. Treat uncached input as ordinary input only, not a total that includes cache writes. <a href="#sources">Sources and evidence limits</a>.</div>
+<div class="inputs">
+  <label>Uncached input (million tokens / month)<input id="wu" type="number" min="0" step="1" value="20"></label>
+  <label>Cached input (million tokens / month)<input id="wc" type="number" min="0" step="1" value="200"></label>
+  <label>Output (million tokens / month)<input id="wo" type="number" min="0" step="1" value="5"></label>
+  <label><span id="capLabel">Monthly cap (optional)</span><input id="wcap" type="number" min="0" step="100" placeholder="e.g. 5000"></label>
+</div>
+<p class="note">Currency changes preserve the cap's value using the latest stored FX rate. Historical cap lines show that fixed amount in the selected currency. With zero token usage, the cost chart uses a linear scale.</p>
+<p class="note" id="tierNote"></p>
+<div class="grid" id="work"></div>
+
+<h3 style="margin-top:24px">A mixed-model budget at snapshot prices</h3>
+<p>Allocate the token volumes above across current models. Shares apply equally to uncached input, cache reads and output, across both vendors together. This illustrative allocation is not measured team usage; change the shares to match your intended mix.</p>
+<div class="tw"><table><thead><tr><th>Vendor / model</th><th class="n">Share (%)</th><th class="n">Monthly base cost</th></tr></thead><tbody id="mixRows"></tbody></table></div>
+<div class="inputs"><label>Planning headroom (%)<input id="headroom" type="number" min="0" max="1000" step="5" value="20"></label></div>
+<p class="note">Headroom is a user-selected contingency on base token costs. It does not calculate excluded charges or guarantee that the cap is sufficient.</p>
+<div id="mixResult" aria-live="polite"></div>
+
+<h2>2. Exchange rate: Australian dollars per US dollar</h2>
+<p>Both vendors price in US dollars, so a cap set in Australian dollars buys less when the Australian dollar weakens.</p>
+<div id="fx"></div>
+
+<h2>3. List prices per million tokens</h2>
+<p>The underlying rates. Hover a chart for its representative model label and price, or open the accessible tables for rates, dates and evidence. Historical lines include provisional points; see each row's evidence status.</p>
+<div id="prices"></div>
+
+<footer id="sources">
+<h2>Sources and interpretation</h2>
+<p>Current rates checked 13 November 2026 against <a href="https://platform.claude.com/docs/en/about-claude/pricing">Anthropic pricing</a> and <a href="https://developers.openai.com/api/docs/pricing">OpenAI pricing</a>. Each historical table row separates rate evidence from effective-date evidence. A current price page alone does not establish a historical price or its start date. Unverified points remain provisional, including assumptions that rates stayed constant between observations.</p>
+<p>Best / Standard / Cheap are editorial groupings of selected model families, not benchmark rankings or equivalent capabilities. Families can change model, tokenizer and price. Percentage changes include these substitutions and, in AUD, FX changes. The chart is not a cost-per-task or productivity comparison, nor an exhaustive model catalogue.</p>
+<p>Before caching is recorded as available, hypothetical cache-read volume is charged at the ordinary input rate. Labels may group multiple releases with the same rates; they do not imply all named models existed on the first date. Some historical rates and dates could not be verified from the original handover, which contained no source URLs.</p>
+<p>AUD uses stored daily <a href="https://frankfurter.dev/">Frankfurter / ECB reference rates</a>, carrying the last observation through weekends and missing days. The last stored FX observation is 11 November 2026. These are reference rates, not bank conversion quotes.</p>
+</footer>
+</main>
+<script>
+const FX=/*FX*/;
+const EVIDENCE=/*EVIDENCE*/;
+const START='2023-03-01',END='2026-11-13',DAY=864e5;
+const T=d=>Date.parse(d+'T00:00:00Z');
+const FXT=FX.map(r=>[T(r[0]),r[1]]);
+function rate(ts){let lo=0,hi=FXT.length-1;while(lo<hi){const m=(lo+hi+1)>>1;if(FXT[m][0]<=ts)lo=m;else hi=m-1}return FXT[lo][1]}
+// steps: [from, input $, output $, models, cached-input price as a fraction of input]
+const VENDORS=[
+{title:'Anthropic (Claude Code)',mark:['2025-02-24','Claude Code launch'],series:[
+ {name:'Opus',steps:[['2024-03-04',15,75,'Claude 3 Opus',1],['2024-08-14',15,75,'Claude 3 Opus, Opus 4, 4.1 (caching added)',.1],['2025-11-24',5,25,'Opus 4.5 to Opus 5',.1],['2026-09-22',4,20,'Opus 5.5',.05]]},
+ {name:'Fable',steps:[['2026-06-09',10,50,'Fable 5',.1],['2026-09-01',10,50,'Fable 5.1 (cheaper caching)',.025],['2026-11-09',8,40,'Fable 5.2',.025]]},
+ {name:'Claude 2 / 2.1',end:'2024-03-04',steps:[['2023-07-11',11.02,32.68,'Claude 2 (July price sheet)',1],['2023-11-21',8,24,'Claude 2 / 2.1 (November price sheet)',1]]},
+ {name:'Sonnet',steps:[['2024-03-04',3,15,'Claude 3 Sonnet, 3.5 Sonnet',1],['2024-08-14',3,15,'Sonnet 3.5 to 4.6 (caching added)',.1],['2026-06-30',2,10,'Sonnet 5',.1],['2026-09-28',2,10,'Sonnet 5.5 (cheaper caching)',.05]]},
+ {name:'Haiku',steps:[['2024-03-13',.25,1.25,'Claude 3 Haiku',1],['2024-08-14',.25,1.25,'Claude 3 Haiku (caching added)',.12],['2024-11-04',.8,4,'Haiku 3.5',.1],['2025-10-15',1,5,'Haiku 4.5',.1],['2026-10-07',.1,.5,'Haiku 5.5',.1]]}]},
+{title:'OpenAI (Codex)',mark:['2025-05-16','Codex agent launch'],series:[
+ {name:'Flagship (GPT-4 to Sol)',steps:[['2023-03-14',30,60,'GPT-4',1],['2023-11-06',10,30,'GPT-4 Turbo',1],['2024-05-13',5,15,'GPT-4o',1],['2024-08-06',2.5,10,'GPT-4o (price cut)',1],['2024-10-01',2.5,10,'GPT-4o (caching added)',.5],['2025-04-14',2,8,'GPT-4.1',.25],['2025-08-07',1.25,10,'GPT-5, 5.1',.1],['2025-12-11',1.75,14,'GPT-5.2',.1],['2026-03-05',2.5,15,'GPT-5.4',.1],['2026-04-24',5,30,'GPT-5.5',.1],['2026-07-09',4,20,'GPT-5.6 Sol',.1],['2026-09-22',2,10,'GPT-6 Sol',.1],['2026-09-29',2,10,'GPT-6.1 Sol (cheaper caching)',.05]]},
+ {name:'Frontier (Astra)',steps:[['2026-09-03',10,50,'GPT-6 Astra',.1]]},
+ {name:'Codex-tuned models',steps:[['2025-05-16',1.5,6,'codex-mini',.25],['2025-09-23',1.25,10,'GPT-5-Codex, 5.1-Codex',.1],['2025-12-11',1.75,14,'GPT-5.2-Codex, 5.3-Codex',.1]]},
+ {name:'Mid (Terra)',steps:[['2026-07-09',2,12,'GPT-5.6 Terra',.1],['2026-10-26',1,5,'GPT-6.1 Terra',.05]]},
+ {name:'Small (mini / Luna)',steps:[['2024-07-18',.15,.6,'GPT-4o mini',1],['2024-10-01',.15,.6,'GPT-4o mini (caching added)',.5],['2025-08-07',.25,2,'GPT-5 mini',.1],['2026-03-17',.75,4.5,'GPT-5.4 mini',.1],['2026-07-09',.2,1.2,'GPT-5.6 Luna',.1],['2026-09-22',.1,.5,'GPT-6 Luna',.1]]}]}];
+const line=(v,n)=>v.series.find(s=>s.name.startsWith(n)).steps,before=(steps,d)=>steps.filter(st=>st[0]<d);
+const [AN,OA]=VENDORS;
+for(const [vi,v] of VENDORS.entries())for(const s of v.series)for(const st of s.steps)st.evidence=EVIDENCE.rows[`${vi}|${s.name}|${st[0]}`];
+AN.simple=[{name:'Best',steps:[...line(AN,'Claude 2'),...before(line(AN,'Opus'),'2026-06-09'),...line(AN,'Fable')]},{name:'Standard',steps:line(AN,'Sonnet')},{name:'Cheap',steps:line(AN,'Haiku')}];
+OA.simple=[{name:'Best',steps:[...before(line(OA,'Flagship'),'2026-09-03'),...line(OA,'Frontier')]},{name:'Standard',steps:line(OA,'Flagship')},{name:'Cheap',steps:line(OA,'Small')}];
+OA.simpleNote='Best and Standard are the same model until GPT-6 Astra arrives in Sep 2026, so the two lines overlap before then.';
+for(const v of VENDORS)for(const list of [v.series,v.simple])list.forEach((s,i)=>{s.ci=i+1;s.segs=s.steps.map((st,j)=>({t0:T(st[0]),t1:j+1<s.steps.length?T(s.steps[j+1][0]):T(s.end||END),st}))});
+const S=v=>state.view==='simple'?v.simple:v.series;
+const state={cur:'AUD',range:'0',scale:'log',view:'simple'};
+const wl={u:20,c:200,o:5,capUSD:0,headroom:20};
+const numeric=(v,max=1e12)=>Number.isFinite(+v)?Math.min(max,Math.max(0,+v)):0;
+function inputNumber(el,max=1e12){const n=numeric(el.value,max);if(el.value!==''&&+el.value!==n)el.value=n;return n}
+const sym=()=>state.cur==='USD'?'$':'A$';
+const fxm=ts=>state.cur==='AUD'?rate(ts):1;
+const capValue=()=>wl.capUSD*fxm(T(END));
+function changeCurrency(cur){if(!['AUD','USD'].includes(cur))return;state.cur=cur;document.getElementById('wcap').value=wl.capUSD?+capValue().toFixed(2):''}
+const money=v=>sym()+(v>=1000?Math.round(v).toLocaleString('en-AU'):v>=100?v.toFixed(0):v>=10?v.toFixed(1).replace(/\.0$/,''):v.toFixed(2));
+const tickMoney=v=>sym()+(v>=1000?+(v/1000).toPrecision(3)+'k':+v.toPrecision(3));
+const XA=()=>+state.range?T(END)-state.range*365*DAY:T(START);
+const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const day=ts=>new Date(ts).toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'});
+const segAt=(s,ts)=>s.segs.find((g,i)=>ts>=g.t0&&(ts<g.t1||(i===s.segs.length-1&&ts<=g.t1)));
+const priceVal=k=>(g,ts)=>g.st[k]*fxm(ts);
+const workVal=(g,ts)=>(wl.u*g.st[1]+wl.c*g.st[1]*g.st[4]+wl.o*g.st[2])*fxm(ts);
+const escapeHTML=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function evidenceHTML(st){const e=st.evidence;return `<strong>${escapeHTML(e.status)}</strong><br>${escapeHTML(e.note)}<br>`+e.sources.map(id=>{const s=EVIDENCE.sources[id];return `<a href="${escapeHTML(s.url)}">${escapeHTML(s.title)}</a>`}).join(' · ')}
+const MIX=VENDORS.flatMap((v,vi)=>v.series.filter(s=>!s.end&&s.name!=='Codex-tuned models').map(s=>({vendor:vi===0?'Anthropic':'OpenAI',s,share:s.name==='Sonnet'||s.name.startsWith('Flagship')?50:0})));
+function mixedBudget(){const total=MIX.reduce((n,m)=>n+m.share,0);if(Math.abs(total-100)>1e-6)return {total,valid:false};const base=MIX.reduce((n,m)=>n+workVal(segAt(m.s,T(END)),T(END))*m.share/100,0);return {total,valid:true,base,planned:base*(1+wl.headroom/100)}}
+function initMix(){
+ document.getElementById('mixRows').innerHTML=MIX.map((m,i)=>`<tr><td>${m.vendor} / ${m.s.steps.at(-1)[3].replace(/ \(.*\)/,'')}</td><td class="n"><input class="mix-input" id="mix-${i}" aria-label="${m.vendor} ${m.s.name} share percent" type="number" min="0" max="100" step="1" value="${m.share}"></td><td class="n" id="mix-cost-${i}"></td></tr>`).join('');
+ MIX.forEach((m,i)=>document.getElementById(`mix-${i}`).addEventListener('input',e=>{m.share=inputNumber(e.target,100);renderMix()}));
+ document.getElementById('headroom').addEventListener('input',e=>{wl.headroom=inputNumber(e.target,1000);renderMix()})}
+function renderMix(){
+ MIX.forEach((m,i)=>document.getElementById(`mix-cost-${i}`).textContent=money(workVal(segAt(m.s,T(END)),T(END))*m.share/100));
+ const b=mixedBudget(),out=document.getElementById('mixResult');
+ if(!b.valid){out.textContent=`Shares total ${+b.total.toFixed(2)}%. Set the total to 100% to calculate a budget.`;return}
+ const comparison=capValue()>0?`<p>${b.planned>capValue()?`${money(b.planned-capValue())} over cap`:`${money(capValue()-b.planned)} remaining under cap`} after headroom.</p>`:'';
+ out.innerHTML=`<div class="tiles"><div class="tile"><div class="k">Mixed base token cost</div><div class="v">${money(b.base)}</div><div>Per month at ${day(T(END))} prices</div></div><div class="tile"><div class="k">With ${wl.headroom}% headroom</div><div class="v">${money(b.planned)}</div><div>Planning scenario; exclusions still apply</div></div></div>${comparison}`}
+let uid=0;
+function lineChart(c){
+ const W=c.w||560,H=c.h||330,M={l:50,r:14,t:14,b:26},xa=XA(),xb=T(END),id='cp'+(uid++);
+ const X=t=>M.l+(t-xa)/(xb-xa)*(W-M.l-M.r);
+ const sampled=c.fx||state.cur==='AUD';
+ const times=g=>{if(g.t1<=xa)return[];const a=Math.max(g.t0,xa),ts=[a];if(sampled)for(const f of FXT)if(f[0]>a&&f[0]<g.t1)ts.push(f[0]);ts.push(g.t1);return ts};
+ const at=(g,t)=>c.val(g,Math.min(t,g.t1-1));
+ let lo=Infinity,hi=-Infinity,hasZero=false;
+ for(const s of c.series)for(const g of s.segs)for(const t of times(g)){const v=at(g,t);if(v===0)hasZero=true;if(v>0){lo=Math.min(lo,v);hi=Math.max(hi,v)}}
+ if(c.cap>0){lo=Math.min(lo,c.cap);hi=Math.max(hi,c.cap)}
+ if(!isFinite(lo)){lo=1;hi=10}
+ const log=(c.scale||state.scale)==='log'&&!hasZero;let a,b,ticks=[];
+ if(log){a=lo/1.4;b=hi*1.4;for(const set of [[1,3],[1,2,5],[1,1.5,2,3,5,7]]){ticks=[];for(let n=-3;n<=8;n++)for(const m of set){const v=+(m*10**n).toPrecision(6);if(v>=a&&v<=b)ticks.push(v)}if(ticks.length>=3)break}}
+ else{if(c.zero===false){const p=(hi-lo||hi)*.15;a=lo-p;b=hi+p}else{a=0;b=hi*1.1}
+  const raw=(b-a)/5,p=10**Math.floor(Math.log10(raw)),f=raw/p,st=(f<1.5?1:f<3.5?2:f<7.5?5:10)*p;for(let v=Math.ceil(a/st)*st;v<=b+st*1e-8;v+=st)ticks.push(+v.toPrecision(10))}
+ const Y=v=>H-M.b-(log?Math.log(v/a)/Math.log(b/a):(v-a)/(b-a))*(H-M.t-M.b);
+ let g=`<clipPath id="${id}"><rect x="${M.l}" y="0" width="${W-M.l-M.r}" height="${H-M.b}"/></clipPath>`;
+ for(const tk of ticks)g+=`<line x1="${M.l}" x2="${W-M.r}" y1="${Y(tk)}" y2="${Y(tk)}" stroke="var(--grid)"/><text x="${M.l-6}" y="${Y(tk)+4}" text-anchor="end">${c.tick(tk)}</text>`;
+ const span=(xb-xa)/DAY/365;let d=new Date(xa);d=new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+1,1));
+ for(;d.getTime()<=xb;d=new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+1,1))){const m=d.getUTCMonth(),x=X(d.getTime()),tm=`<line x1="${x}" x2="${x}" y1="${H-M.b}" y2="${H-M.b+4}" stroke="var(--axis)"/>`;
+  if(span>2.5){if(m===0)g+=tm;if(m===6)g+=`<text x="${x}" y="${H-8}" text-anchor="middle">${d.getUTCFullYear()}</text>`}
+  else if(m%(span>1.5?3:2)===0)g+=tm+`<text x="${x}" y="${H-8}" text-anchor="middle">${MON[m]} ${String(d.getUTCFullYear()).slice(2)}</text>`}
+ g+=`<line x1="${M.l}" x2="${W-M.r}" y1="${H-M.b}" y2="${H-M.b}" stroke="var(--axis)"/>`;
+ if(c.mark&&T(c.mark[0])>xa){const mx=X(T(c.mark[0]));g+=`<line x1="${mx}" x2="${mx}" y1="${M.t}" y2="${H-M.b}" stroke="var(--axis)" stroke-dasharray="3 3"/><text x="${mx+5}" y="${H-M.b-6}">${c.mark[1]}</text>`}
+ if(c.cap>0)g+=`<line x1="${M.l}" x2="${W-M.r}" y1="${Y(c.cap)}" y2="${Y(c.cap)}" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="6 4"/><text x="${W-M.r}" y="${Y(c.cap)-5}" text-anchor="end" style="fill:var(--ink);font-weight:600">Cap ${money(c.cap)}</text>`;
+ for(const s of c.series){let p='';for(const sg of s.segs)for(const t of times(sg))p+=(p?'L':'M')+X(t).toFixed(1)+' '+Y(at(sg,t)).toFixed(1);if(p)g+=`<path clip-path="url(#${id})" d="${p}" fill="none" stroke="var(--s${s.ci})" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`}
+ g+=`<line class="ch" y1="${M.t}" y2="${H-M.b}" stroke="var(--muted)" style="display:none"/><g class="dots"></g><rect class="hit" x="${M.l}" y="${M.t}" width="${W-M.l-M.r}" height="${H-M.t-M.b}" fill="transparent"/>`;
+ const card=document.createElement('div');card.className='card';
+ card.innerHTML=`<h4>${c.title}</h4><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${c.title}">${g}</svg><div class="tip"></div>`;
+ const svg=card.querySelector('svg'),tip=card.querySelector('.tip'),ch=card.querySelector('.ch'),dots=card.querySelector('.dots'),hit=card.querySelector('.hit');
+ hit.addEventListener('mousemove',e=>{
+  const r=svg.getBoundingClientRect(),px=(e.clientX-r.left)/r.width*W,ts=Math.max(xa,Math.min(xb,xa+(px-M.l)/(W-M.l-M.r)*(xb-xa)));
+  ch.setAttribute('x1',px);ch.setAttribute('x2',px);ch.style.display='';
+  const rows=[];let dd='';
+  for(const s of c.series){const sg=segAt(s,ts);if(sg){const v=c.val(sg,ts);rows.push({s,v,m:sg.st?sg.st[3]+' — '+sg.st.evidence.status:''});dd+=`<circle cx="${px}" cy="${Y(v)}" r="4" fill="var(--s${s.ci})" stroke="var(--surface)" stroke-width="2"/>`}}
+  dots.innerHTML=dd;rows.sort((p,q)=>q.v-p.v);
+  tip.innerHTML=`<b>${day(ts)}</b>`+(rows.map(q=>`<div><span class="sw" style="background:var(--s${q.s.ci})"></span>${q.s.name} <i>${q.m}</i><em>${c.fmt(q.v)}</em></div>`).join('')||'<div><i>No models in this series yet</i></div>');
+  tip.style.display='block';const cr=card.getBoundingClientRect(),lx=e.clientX-cr.left;
+  tip.style.left=Math.max(4,lx>cr.width/2?lx-tip.offsetWidth-14:lx+14)+'px';tip.style.top=Math.max(8,e.clientY-cr.top-20)+'px'});
+ hit.addEventListener('mouseleave',()=>{tip.style.display='none';ch.style.display='none';dots.innerHTML=''});
+ return card}
+const legend=v=>`<div class="legend">${S(v).map(s=>`<span><span class="sw" style="background:var(--s${s.ci})"></span>${s.name}</span>`).join('')}</div>`+(state.view==='simple'&&v.simpleNote?`<p class="note">${v.simpleNote}</p>`:'');
+function renderWork(){
+ const out=document.getElementById('work');out.innerHTML='';const now=T(END),ago=now-365*DAY;
+ for(const v of VENDORS){
+  const col=document.createElement('div');col.className='col';col.innerHTML=`<h3>${v.title}</h3>${legend(v)}`;
+  col.append(lineChart({title:`Monthly base token cost (${state.cur})`,series:S(v),val:workVal,fmt:money,tick:tickMoney,mark:v.mark,cap:capValue()}));
+  const tiles=document.createElement('div');tiles.className='tiles';
+  for(const s of S(v)){const g=segAt(s,now);if(!g)continue;const cost=workVal(g,now),p=segAt(s,ago);let delta;
+   if(cost===0)delta='No token usage; percentage change not applicable';
+   else if(p){const pc=(cost/workVal(p,ago)-1)*100;delta=Math.abs(pc)<.5?'No change vs 12 months ago':`<span class="${pc>0?'up':'down'}">${pc>0?'▲':'▼'} ${Math.abs(pc).toFixed(0)}%</span> vs 12 months ago (family / FX comparison)`}
+   else delta=`New since ${MON[new Date(s.segs[0].t0).getUTCMonth()]} ${new Date(s.segs[0].t0).getUTCFullYear()}`;
+   const capLine=capValue()>0?`<div>${cost>0?`${(capValue()/cost).toFixed(1)}× this token volume fits in the cap`:'No base token spend against cap'}</div>`:'';
+   tiles.insertAdjacentHTML('beforeend',`<div class="tile"><div class="k"><span class="sw" style="background:var(--s${s.ci})"></span>${s.name}</div><div class="m">${g.st[3].replace(/ \(.*\)/,'')} at snapshot</div><div class="v">${money(cost)}</div><div>${delta}</div>${capLine}</div>`)}
+  col.append(tiles);out.append(col)}}
+function renderFx(){
+ const out=document.getElementById('fx');out.innerHTML='';const xa=XA(),vis=FXT.filter(f=>f[0]>=xa);
+ let lo=vis[0],hi=vis[0];for(const f of vis){if(f[1]<lo[1])lo=f;if(f[1]>hi[1])hi=f}const now=FXT[FXT.length-1];
+ out.append(lineChart({title:'AUD per USD (higher means a weaker Australian dollar)',w:1140,h:230,fx:true,scale:'linear',zero:false,series:[{name:'AUD per USD',ci:1,segs:[{t0:FXT[0][0],t1:T(END),st:null}]}],val:(g,ts)=>rate(ts),fmt:v=>v.toFixed(3),tick:v=>v.toFixed(2)}));
+ const t=(k,v,m)=>`<div class="tile"><div class="k">${k}</div><div class="v">${v}</div><div>${m}</div></div>`;
+ out.insertAdjacentHTML('beforeend',`<div class="tiles">${t('Now',now[1].toFixed(3),day(now[0]))}${t('Lowest in period',lo[1].toFixed(3),day(lo[0]))}${t('Highest in period',hi[1].toFixed(3),day(hi[0]))}${t('Low-to-high swing',((hi[1]/lo[1]-1)*100).toFixed(0)+'%','On an unchanged US dollar bill')}${t('Now vs highest',((hi[1]/now[1]-1)*100).toFixed(0)+'%','Extra AUD needed if the rate returned to its high')}</div>`)}
+function renderPrices(){
+ const out=document.getElementById('prices');out.innerHTML='';
+ for(const v of VENDORS){
+  const sec=document.createElement('section');sec.innerHTML=`<h3 style="margin-top:20px">${v.title}</h3>${legend(v)}`;
+  const grid=document.createElement('div');grid.className='grid';
+  for(const [k,l] of [[1,'Input'],[2,'Output']])grid.append(lineChart({title:`${l} price per million tokens (${state.cur})`,series:S(v),val:priceVal(k),fmt:money,tick:tickMoney,mark:v.mark}));
+  sec.append(grid);
+  let h='<div class="tw"><table><tr><th>Tier</th><th>Models</th><th>From (chart assumption)</th><th class="n">Input USD</th><th class="n">Cached input USD</th><th class="n">Output USD</th><th class="n">Input AUD</th><th class="n">Output AUD</th><th>Evidence (checked 13 Nov 2026)</th></tr>';
+  for(const s of v.series)for(const st of s.steps){const r=rate(T(st[0]));h+=`<tr><td>${s.name}</td><td>${st[3]}</td><td>${day(T(st[0]))}</td><td class="n">$${st[1].toFixed(2)}</td><td class="n">$${+(st[1]*st[4]).toFixed(3)}</td><td class="n">$${st[2].toFixed(2)}</td><td class="n">A$${(st[1]*r).toFixed(2)}</td><td class="n">A$${(st[2]*r).toFixed(2)}</td><td class="evidence">${evidenceHTML(st)}</td></tr>`}
+  const d=document.createElement('details');d.innerHTML='<summary>Price changes as a table (AUD at the rate on the day of each change)</summary>'+h+'</table></div>';sec.append(d);out.append(sec)}}
+function render(){
+ for(const sg of document.querySelectorAll('.seg'))for(const b of sg.children)b.setAttribute('aria-pressed',state[sg.dataset.k]===b.dataset.v);
+ document.getElementById('curNote').textContent=state.cur==='AUD'?`AUD at historical FX; latest stored: ${FX[FX.length-1][1].toFixed(3)} on ${day(FXT.at(-1)[0])}.`:'US dollars, as billed.';
+ document.getElementById('tierNote').textContent='Editorial families: Best follows Claude 2 → Opus → Fable and main GPT → Astra; Standard follows Sonnet and main GPT / Sol; Cheap follows Haiku and mini / Luna. These are selected families, not measured capability rankings. Historical comparisons combine model substitutions, price changes and (in AUD) FX. Provisional points are identified in tooltips and the source tables.';
+ document.getElementById('capLabel').textContent=`Monthly cap in ${state.cur} (optional)`;
+ renderWork();renderFx();renderPrices();renderMix()}
+const allowed={cur:['AUD','USD'],view:['simple','detail'],range:['0','1','2'],scale:['log','linear']};
+for(const sg of document.querySelectorAll('.seg'))sg.addEventListener('click',e=>{const k=sg.dataset.k,v=e.target.dataset.v;if(allowed[k]?.includes(v)){if(k==='cur')changeCurrency(v);else state[k]=v;render()}});
+for(const [id,k] of [['wu','u'],['wc','c'],['wo','o'],['wcap','capUSD']])document.getElementById(id).addEventListener('input',e=>{wl[k]=inputNumber(e.target)/(k==='capUSD'?fxm(T(END)):1);renderWork();renderMix()});
+const params=new URLSearchParams(location.hash.slice(1));
+for(const [k,values] of Object.entries(allowed)){const v=params.get(k);if(values.includes(v))state[k]=v}
+if(params.has('cap')){wl.capUSD=numeric(params.get('cap'))/fxm(T(END));document.getElementById('wcap').value=capValue()||''}
+initMix();
+render();
+</script>
+</body>
+</html>
